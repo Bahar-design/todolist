@@ -1,0 +1,1 @@
+console.log("wassap this is index.js");
