@@ -1,6 +1,14 @@
 import createToDo from "./todo.js";
 import createProject from "./project.js";
+import manageProjects from "./managers/projectManager.js";
+//import from "./dom.js";
 
-console.log("wassap this is index.js");
+//index is focused on initialization! Use factories to create the default project structure!
 
-// next commit should be when application logic is finished, then dom/ui, then webpack, then localstorage?
+const defaultProject = createProject("Default Project"); //only need to pass in a title
+const initialToDo = createToDo("Workout", "Finish an intensive workout today.", new Date().toISOString(), "high"); //passes in todo title, desc, duedate, & priority
+
+defaultProject.addToDo(initialToDo); //use addtodo function from project.js & pass initial todo
+
+const projManager = manageProjects();
+projManager.addProject(defaultProject); // use a variable to call manageProjects & use its method

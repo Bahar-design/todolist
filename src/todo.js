@@ -20,11 +20,11 @@ export default function createToDo (title, description, dueDate, priority) {
 
     return { 
         id, 
-        title, 
-        description, 
-        dueDate, 
-        priority,
-        get completed() { return completed; }, //exposing as read-only getter for encapsulation
+        get title() { return title; }, //exposing as read-only getter for encapsulation
+        get description() { return description; }, 
+        get dueDate() { return dueDate; }, 
+        get priority() { return priority; },
+        get completed() { return completed; },
         toggleComplete,
         updateDetails,
     };
