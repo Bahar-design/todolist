@@ -3,22 +3,46 @@ import createToDo from "./todo.js";
 import createProject from "./managers/project.js";
 import manageProjects from "./managers/projectManager.js";
 import { showTodoForm, renderProjects, renderTodos, handleProjectClicks, handleTodoClicks } from "./dom.js";
+import { saveProjects, loadProjects } from "./storage.js";
 
 const projectManager = manageProjects();
 
-const defaultProject = createProject("Default Project"); //only need to pass in a title
-const initialToDo = createToDo("Workout", "Finish an intensive workout today.", new Date().toISOString(), "high"); //passes in todo title, desc, duedate, & priority
+const savedProjects = loadProjects(); //tries to read from localStorage
 
-defaultProject.addToDo(initialToDo); //use addtodo function from project.js & pass initial todo
-projectManager.addProject(defaultProject); // use a variable to call manageProjects & use its method
+let activeProjectId;
 
-let activeProjectId = defaultProject.projectId; //tracks currently selected project
+if (savedProjects) { //runs after every refresh
+    savedProjects.forEach(savedProject => {
+        const project = createProject(savedProject.title); //rebuild each project
+
+        savedProject.toDos.forEach(savedTodo => {
+            const todo = createToDo(savedTodo.title, savedTodo.description, savedTodo.dueDate, savedTodo.priority); //rebuild each to-do
+
+            if (savedTodo.completed) { //completed is in private state, can't be restored directly
+                todo.toggleComplete(); //restore through method behavior
+            }
+            project.addToDo(todo);
+        });
+        projectManager.addProject(project);
+    });
+
+    activeProjectId = projectManager.projects[0].projectId; //selects first project automatically
+} else {
+    //if no saved data exists (initial app load), create starter project & to-do
+    const defaultProject = createProject("Default Project");
+    const initialToDo = createToDo("Workout", "Finish an intensive workout today.", new Date().toISOString(), "high");
+
+    defaultProject.addToDo(initialToDo);
+    projectManager.addProject(defaultProject);
+
+    activeProjectId = defaultProject.projectId;
+}
 
 function renderApp() { //function called after every change
     const projects = projectManager.projects;
     const activeProject = projectManager.findProjectById(activeProjectId);
 
-    renderProjects(projects, activeProjectId);
+    renderProjects(projects, activeProjectId); //updates dom only
     renderTodos(activeProject);
 }
 
@@ -33,27 +57,26 @@ handleTodoClicks((todoId, action) => {
 
     if (action === "delete") {
         project.deleteToDo(todoId);
+        persist(); //call persist after any mutation
         renderApp();
         return;
     }
 
     if (action === "toggle") {
         todo.toggleComplete();
+        persist();
         renderApp();
         return;
     }
 
-    if (action === "edit") {
+    if (e.target.dataset.edit) {
         showTodoForm((data) => {
             todo.updateDetails(data);
+            persist();
             renderApp();
         }, todo);
     }
 });
-
-
-
-renderApp(); //initial render to show UI on page load
 
 //add project behavior
 const newProjectBtn = document.getElementById('new-project-btn');
@@ -65,6 +88,7 @@ newProjectBtn.addEventListener("click", () => {
     projectManager.addProject(project);
 
     activeProjectId = project.projectId; //automatically selects new project
+    persist();
     renderApp(); //redraws UI
 });
 
@@ -77,6 +101,13 @@ newToDoBtn.addEventListener("click", () => {
         const newToDo = createToDo(data.title, data.description, data.dueDate, data.priority);
 
         project.addToDo(newToDo);
+        persist();
         renderApp();
     });
 });
+
+function persist() {
+    saveProjects(projectManager.projects);
+}
+
+renderApp(); //initial render to show UI on page load
