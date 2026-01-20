@@ -1,4 +1,5 @@
 //index is focused on initialization! Use factories to create the default project structure!
+import "./styles.css";
 import createToDo from "./todo.js";
 import createProject from "./managers/project.js";
 import manageProjects from "./managers/projectManager.js";

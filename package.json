@@ -4,7 +4,10 @@
   "description": "Create a todo list to practice with webpack, localstorage, OOP, etc",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "dev": "webpack serve --open"
   },
   "repository": {
     "type": "git",
@@ -22,6 +25,7 @@
     "html-webpack-plugin": "^5.6.5",
     "style-loader": "^4.0.0",
     "webpack": "^5.104.1",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^4.11.1"
   }
 }
