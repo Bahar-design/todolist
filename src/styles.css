@@ -250,24 +250,106 @@ main {
     box-shadow: var(--shadow-md);
 }
 
+.todo-item.expanded {
+    border-left-width: 4px;
+}
+
 /*priority Colors */
 .todo-item[data-priority="low"] {
     border-left-color: var(--color-priority-low);
+    background: linear-gradient(to right, rgba(122, 157, 140, 0.03), var(--color-surface));
 }
 
 .todo-item[data-priority="medium"] {
     border-left-color: var(--color-priority-medium);
+    background: linear-gradient(to right, rgba(217, 156, 77, 0.05), var(--color-surface));
 }
 
 .todo-item[data-priority="high"] {
     border-left-color: var(--color-priority-high);
+    background: linear-gradient(to right, rgba(193, 84, 38, 0.05), var(--color-surface));
 }
 
-.todo-item span {
+.todo-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.todo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.todo-title {
     font-size: 1rem;
     color: var(--color-text-primary);
-    font-weight: 400;
+    font-weight: 500;
+}
+
+.todo-date {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.todo-details {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-sm);
+    animation: expandDown 0.2s ease;
+}
+
+@keyframes expandDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.todo-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-sm);
+}
+
+.priority-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.priority-badge[data-priority="low"] {
+    background: rgba(122, 157, 140, 0.15);
+    color: #2d5a43;
+}
+
+.priority-badge[data-priority="medium"] {
+    background: rgba(217, 156, 77, 0.15);
+    color: #8b6324;
+}
+
+.priority-badge[data-priority="high"] {
+    background: rgba(193, 84, 38, 0.15);
+    color: #8b3515;
+}
+
+.todo-actions {
+    display: flex;
+    gap: var(--space-xs);
+    flex-shrink: 0;
 }
 
 .todo-item button {

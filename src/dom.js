@@ -24,9 +24,9 @@ export function showTodoForm(onSubmit, existingTodo = null) {
             <label>
                 Priority
                 <select id="todo-priority">
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low" ${existingTodo?.priority === "low" ? "selected" : ""}>Low</option>
+                    <option value="medium" ${existingTodo?.priority === "medium" ? "selected" : ""}>Medium</option>
+                    <option value="high" ${existingTodo?.priority === "high" ? "selected" : ""}>High</option>
                 </select>
             </label>
 
@@ -79,15 +79,53 @@ function renderTodos(project) {
     project.toDos.forEach(todo => {
         const wrapper = document.createElement("div");
         wrapper.dataset.id = todo.id;
+        wrapper.dataset.priority = todo.priority;
         wrapper.classList.add("todo-item");
 
-        const text = document.createElement("span");
-        text.textContent = todo.title;
+        const content = document.createElement("div");
+        content.classList.add("todo-content");
+
+        const header = document.createElement("div");
+        header.classList.add("todo-header");
+
+        const titleSpan = document.createElement("span");
+        titleSpan.classList.add("todo-title");
+        titleSpan.textContent = todo.title;
 
         if (todo.completed) {
             text.style.textDecoration = "line-through";
             text.style.opacity = "0.6";
         }
+
+        const dueDate = document.createElement("span");
+        dueDate.classList.add("todo-date");
+        if (todo.dueDate) {
+            const date = new Date(todo.dueDate);
+            dueDate.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        header.append(titleSpan, dueDate);
+
+        // Details section (initially hidden)
+        const details = document.createElement("div");
+        details.classList.add("todo-details");
+        details.style.display = "none";
+
+        const description = document.createElement("p");
+        description.classList.add("todo-description");
+        description.textContent = todo.description || "No description";
+
+        const priorityBadge = document.createElement("span");
+        priorityBadge.classList.add("priority-badge");
+        priorityBadge.textContent = `Priority: ${todo.priority}`;
+        priorityBadge.dataset.priority = todo.priority;
+
+        details.append(description, priorityBadge);
+
+        content.append(header, details);
+
+        const actions = document.createElement("div");
+        actions.classList.add("todo-actions");
 
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
@@ -97,7 +135,9 @@ function renderTodos(project) {
         deleteBtn.textContent = "Delete";
         deleteBtn.dataset.action = "delete";
 
-        wrapper.append(text, editBtn, deleteBtn);
+        actions.append(editBtn, deleteBtn);
+
+        wrapper.append(content, actions);
         todosContainer.appendChild(wrapper);
     });
 }
@@ -120,10 +160,23 @@ function handleTodoClicks(onTodoAction) {
 
         if (action === "edit") {
             onTodoAction(todoId, "edit");
-        } else if (action === "delete") {
+            return;
+        }
+        
+        if (action === "delete") {
             onTodoAction(todoId, "delete");
-        } else {
-            onTodoAction(todoId, "toggle"); //clicking on text toggles completion
+            return;
+        }
+
+        if (!action) { //if clicking on content area (not buttons), then toggle details
+            const details = todoElement.querySelector(".todo-details");
+            if (details.style.display === "none") {
+                details.style.display = "block";
+                todoElement.classList.add("expanded");
+            } else {
+                details.style.display = "none";
+                todoElement.classList.remove("expanded");
+            }
         }
     });
 }

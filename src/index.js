@@ -69,7 +69,7 @@ handleTodoClicks((todoId, action) => {
         return;
     }
 
-    if (e.target.dataset.edit) {
+    if (action === "edit") {
         showTodoForm((data) => {
             todo.updateDetails(data);
             persist();
