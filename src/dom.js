@@ -86,6 +86,7 @@ function renderTodos(project) {
 
         if (todo.completed) {
             text.style.textDecoration = "line-through";
+            text.style.opacity = "0.6";
         }
 
         const editBtn = document.createElement("button");
@@ -93,7 +94,7 @@ function renderTodos(project) {
         editBtn.dataset.action = "edit";
 
         const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "X";
+        deleteBtn.textContent = "Delete";
         deleteBtn.dataset.action = "delete";
 
         wrapper.append(text, editBtn, deleteBtn);
